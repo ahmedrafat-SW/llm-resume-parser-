@@ -1,0 +1,204 @@
+ <div class="container">
+      <header>
+        <h1>Job Application Form</h1>
+        <p>Upload your CV to auto-fill the form</p>
+      </header>
+
+      <!-- CV Upload Section -->
+      <div class="upload-section">
+        <div class="upload-box" 
+             (click)="fileInput.click()"
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onDrop($event)"
+             [class.dragging]="isDragging">
+          <input #fileInput 
+                 type="file" 
+                 (change)="onFileSelected($event)"
+                 accept=".pdf,.docx,.txt"
+                 hidden>
+          
+          <div class="upload-content">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <h3>{{ selectedFile ? selectedFile.name : 'Drop your CV here or click to browse' }}</h3>
+            <p>Supports PDF, DOCX, and TXT files</p>
+          </div>
+        </div>
+
+        <button *ngIf="selectedFile" 
+                (click)="uploadAndParse()" 
+                [disabled]="isUploading"
+                class="btn btn-primary">
+          {{ isUploading ? 'Processing...' : 'Parse CV & Auto-Fill Form' }}
+        </button>
+
+        <div *ngIf="uploadProgress > 0 && uploadProgress < 100" class="progress-bar">
+          <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+        </div>
+
+        <div *ngIf="errorMessage" class="alert alert-error">
+          {{ errorMessage }}
+        </div>
+
+        <div *ngIf="successMessage" class="alert alert-success">
+          {{ successMessage }}
+        </div>
+      </div>
+
+      <!-- Application Form -->
+      <form class="application-form" (ngSubmit)="submitApplication()">
+        <h2>Personal Information</h2>
+        
+        <div class="form-group">
+          <label for="fullName">Full Name *</label>
+          <input 
+            id="fullName" 
+            type="text" 
+            [(ngModel)]="formData.personalInfo.fullName"
+            name="fullName"
+            required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input 
+              id="email" 
+              type="email" 
+              [(ngModel)]="formData.personalInfo.email"
+              name="email"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input 
+              id="phone" 
+              type="tel" 
+              [(ngModel)]="formData.personalInfo.phone"
+              name="phone"
+              required>
+          </div>
+        </div>
+
+        <h2>Education</h2>
+        
+        <div *ngFor="let edu of formData.education; let i = index" class="education-entry">
+          <h3>Education {{ i + 1 }}</h3>
+          
+          <div class="form-group">
+            <label [for]="'degree' + i">Degree/Qualification</label>
+            <input 
+              [id]="'degree' + i" 
+              type="text" 
+              [(ngModel)]="edu.degree"
+              [name]="'degree' + i">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label [for]="'institution' + i">Institution</label>
+              <input 
+                [id]="'institution' + i" 
+                type="text" 
+                [(ngModel)]="edu.institution"
+                [name]="'institution' + i">
+            </div>
+
+            <div class="form-group">
+              <label [for]="'year' + i">Year</label>
+              <input 
+                [id]="'year' + i" 
+                type="text" 
+                [(ngModel)]="edu.year"
+                [name]="'year' + i">
+            </div>
+          </div>
+
+          <button type="button" 
+                  *ngIf="formData.education.length > 1"
+                  (click)="removeEducation(i)" 
+                  class="btn btn-danger">
+            Remove
+          </button>
+        </div>
+
+        <button type="button" (click)="addEducation()" class="btn btn-secondary">
+          + Add Education
+        </button>
+
+        <h2>Work Experience</h2>
+        
+        <div *ngFor="let exp of formData.experience; let i = index" class="experience-entry">
+          <h3>Experience {{ i + 1 }}</h3>
+          
+          <div class="form-group">
+            <label [for]="'title' + i">Job Title</label>
+            <input 
+              [id]="'title' + i" 
+              type="text" 
+              [(ngModel)]="exp.title"
+              [name]="'title' + i">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label [for]="'company' + i">Company</label>
+              <input 
+                [id]="'company' + i" 
+                type="text" 
+                [(ngModel)]="exp.company"
+                [name]="'company' + i">
+            </div>
+
+            <div class="form-group">
+              <label [for]="'period' + i">Period</label>
+              <input 
+                [id]="'period' + i" 
+                type="text" 
+                [(ngModel)]="exp.period"
+                [name]="'period' + i"
+                placeholder="e.g., 2020 - 2023">
+            </div>
+          </div>
+
+          <button type="button" 
+                  *ngIf="formData.experience.length > 1"
+                  (click)="removeExperience(i)" 
+                  class="btn btn-danger">
+            Remove
+          </button>
+        </div>
+
+        <button type="button" (click)="addExperience()" class="btn btn-secondary">
+          + Add Experience
+        </button>
+
+        <h2>Skills</h2>
+        
+        <div class="form-group">
+          <label for="skills">Skills (comma-separated)</label>
+          <textarea 
+            id="skills" 
+            [(ngModel)]="skillsText"
+            name="skills"
+            rows="4"
+            placeholder="e.g., Python, JavaScript, React, Angular"></textarea>
+        </div>
+
+        <div *ngIf="formData.skills.length > 0" class="skills-tags">
+          <span *ngFor="let skill of formData.skills" class="skill-tag">
+            {{ skill }}
+            <button type="button" (click)="removeSkill(skill)">&times;</button>
+          </span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-large">
+          Submit Application
+        </button>
+      </form>
+    </div>
