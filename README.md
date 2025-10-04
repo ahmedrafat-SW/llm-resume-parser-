@@ -399,18 +399,6 @@ python -m pytest tests/test_parser.py -v
 python -m pytest --cov=. tests/
 ```
 
-### Frontend Tests
-
-```bash
-cd frontend/cv-parser-frontend
-
-# Unit tests
-ng test
-
-# E2E tests
-ng e2e
-```
-
 ### Manual Testing
 
 Sample CVs are provided in `tests/sample_cvs/`:
@@ -547,7 +535,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **Your Name** - *Initial work* - [@yourusername](https://github.com/yourusername)
+- **Ahmed Rafat** 
 
 See also the list of [contributors](https://github.com/yourusername/cv-parser-ai/contributors) who participated in this project.
 
